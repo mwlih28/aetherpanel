@@ -8,8 +8,9 @@ set -e
 echo "🚀 Starting Aetherpanel Installation..."
 
 # 1. Update and install dependencies
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y curl wget git gnupg2 software-properties-common lsb-release ca-certificates
+export DEBIAN_FRONTEND=noninteractive
+sudo -E apt update && sudo -E apt upgrade -y
+sudo -E apt install -y curl wget git gnupg2 software-properties-common lsb-release ca-certificates
 
 # 2. Install Docker
 echo "🐳 Installing Docker..."
