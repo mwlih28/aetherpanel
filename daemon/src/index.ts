@@ -8,14 +8,15 @@ import { BackupService } from './services/backup_service';
 const docker = new Docker();
 
 // Initialize Socket.io Server (Standalone)
-const io = new Server(3002, {
+const port = parseInt(process.env.PORT || '3002');
+const io = new Server(port, {
     cors: {
         origin: '*', // In production, restrict this to Panel IP
         methods: ["GET", "POST"]
     }
 });
 
-console.log('[DAEMON] Aetherpanel Daemon (Wings) listening on port 3002');
+console.log(`[DAEMON] Aetherpanel Daemon (Wings) listening on port ${port}`);
 
 io.on('connection', (socket: Socket) => {
     console.log('[DAEMON] New connection:', socket.id);

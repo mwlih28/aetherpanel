@@ -63,7 +63,7 @@ server {
     server_name $DOMAIN;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://localhost:3300;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -71,7 +71,7 @@ server {
     }
 
     location /api {
-        proxy_pass http://localhost:3001;
+        proxy_pass http://localhost:3301;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -97,21 +97,22 @@ npx prisma db push --accept-data-loss
 ADMIN_PASSWORD=$PASSWORD npx prisma db seed
 npm run build
 pm2 delete aether-api || true
-pm2 start dist/index.js --name aether-api
+PORT=3301 pm2 start dist/index.js --name aether-api
 
 # Daemon Setup
 cd /var/www/aetherpanel/daemon
 npm install
 npm run build
 pm2 delete aether-daemon || true
-pm2 start dist/index.js --name aether-daemon
+PORT=3302 pm2 start dist/index.js --name aether-daemon
 
 # Panel Setup
 cd /var/www/aetherpanel/panel
 npm install
 npm run build
 pm2 delete aether-panel || true
-pm2 start npm --name aether-panel -- start
+# Next.js production start on custom port
+PORT=3300 pm2 start npm --name aether-panel -- start -- -p 3300
 
 # 10. Finalizing
 echo "✅ Installation complete! Aetherpanel is now accessible at https://$DOMAIN"
