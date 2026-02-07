@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 
 export default function CreateServerPage() {
     const [step, setStep] = useState(1);
-    const [nodes, setNodes] = useState([]);
+    const [nodes, setNodes] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const router = useRouter();
@@ -178,8 +178,9 @@ export default function CreateServerPage() {
                             </div>
                             <div className="text-left">
                                 <p className="text-xs font-bold text-white/20 uppercase tracking-widest">Location</p>
-                                <p className="text-lg font-bold">{nodes.find((n: any) => n.id === formData.nodeId)?.name}</p>
+                                <p className="text-lg font-bold">{(nodes.find((n: any) => n.id === formData.nodeId) as any)?.name || 'Unknown Node'}</p>
                             </div>
+
                         </div>
 
                         <div className="flex flex-col items-center gap-6">

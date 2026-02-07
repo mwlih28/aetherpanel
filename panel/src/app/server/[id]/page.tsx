@@ -82,8 +82,9 @@ export default function ServerDetail() {
 
     const handlePower = (action: string) => {
         socket?.emit('server:power', { serverId: id, action });
-        toast.info(`Power action ${action} initiated`);
+        toast(`Power action ${action} initiated`, { icon: '⚡' });
     };
+
 
     const handleNavigate = (path: string) => {
         setCurrentPath(path);

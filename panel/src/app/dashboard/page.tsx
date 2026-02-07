@@ -10,7 +10,7 @@ import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
 export default function DashboardPage() {
-    const [servers, setServers] = useState([]);
+    const [servers, setServers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

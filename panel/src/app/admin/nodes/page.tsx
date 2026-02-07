@@ -7,7 +7,7 @@ import api from '@/lib/api';
 import toast from 'react-hot-toast';
 
 export default function NodesPage() {
-    const [nodes, setNodes] = useState([]);
+    const [nodes, setNodes] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAdd, setShowAdd] = useState(false);
     const [formData, setFormData] = useState({ name: '', ip: '', port: '3302', token: 'aether-secret-token' });
