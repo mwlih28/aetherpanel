@@ -27,8 +27,16 @@ export const register = async (req: Request, res: Response) => {
 
         res.json({ message: 'User created', userId: user.id });
     } catch (error: any) {
-        console.error('[REGISTER-ERROR]', error?.message || error);
-        res.status(400).json({ error: error.message?.includes('Unique constraint') ? 'Email or username already exists' : 'Registration failed' });
+        console.error('[REGISTER-ERROR]', error);
+
+        let message = 'Registration failed';
+        if (error.code === 'P2002') {
+            message = 'Email or username already exists';
+        } else if (error.message) {
+            message = `Error: ${error.message.substring(0, 100)}`;
+        }
+
+        res.status(400).json({ error: message });
     }
 };
 
