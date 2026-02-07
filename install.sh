@@ -37,8 +37,8 @@ git clone https://github.com/mwlih28/aetherpanel.git .
 
 # 6. Environment Configuration
 echo "📝 Configuring environment..."
-read -p "Enter your Domain (e.g., panel.example.com): " DOMAIN
-read -p "Enter Admin Password: " PASSWORD
+read -p "Enter your Domain (e.g., panel.example.com): " DOMAIN </dev/tty
+read -p "Enter Admin Password: " PASSWORD </dev/tty
 
 # 7. Nginx & Reverse Proxy
 echo "🌐 Configuring Nginx..."
