@@ -82,8 +82,8 @@ export default function LoginPage() {
                     </button>
                 </form>
 
-                <p className="text-center mt-8 text-white/20 text-xs">
-                    Dont have an account? <span className="text-white/40 cursor-pointer hover:text-white">Contact your administrator</span>
+                <p className="text-center mt-8 text-white/20 text-xs text-balance">
+                    Dont have an account? <Link href="/auth/register" className="text-primary font-bold hover:underline">Register now</Link>
                 </p>
             </motion.div>
         </div>
