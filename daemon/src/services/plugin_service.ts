@@ -20,7 +20,7 @@ export class PluginService {
         });
 
         const writer = fs.createWriteStream(path.join(pluginsPath, fileName));
-        response.data.pipe(writer);
+        (response.data as any).pipe(writer);
 
         return new Promise((resolve, reject) => {
             writer.on('finish', resolve);
