@@ -31,17 +31,9 @@ sudo apt install -y nginx certbot python3-certbot-nginx
 
 # 5. Setup Project
 echo "📂 Setting up Aetherpanel..."
-if [ -d "/var/www/aetherpanel/.git" ]; then
-    echo "🔄 Directory exists and is a git repo, pulling updates..."
-    cd /var/www/aetherpanel
-    sudo git pull origin main
-else
-    echo "🏗️ Fresh install or directory is not a repo, preparing target..."
-    sudo rm -rf /var/www/aetherpanel
-    sudo mkdir -p /var/www/aetherpanel
-    cd /var/www/aetherpanel
-    sudo git clone https://github.com/mwlih28/aetherpanel.git .
-fi
+sudo rm -rf /var/www/aetherpanel
+sudo git clone https://github.com/mwlih28/aetherpanel.git /var/www/aetherpanel
+cd /var/www/aetherpanel
 cd /var/www/aetherpanel
 
 # 6. Environment Configuration
