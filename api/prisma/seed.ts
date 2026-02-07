@@ -5,7 +5,7 @@ import 'dotenv/config';
 const prisma = new PrismaClient();
 
 async function main() {
-    const adminPassword = await argon2.hash('admin123');
+    const adminPassword = await argon2.hash(process.env.ADMIN_PASSWORD || 'admin123');
 
     const admin = await prisma.user.upsert({
         where: { email: 'admin@aether.panel' },

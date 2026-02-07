@@ -42,8 +42,20 @@ echo "📝 Configuring environment..."
 read -p "Enter your Domain (e.g., panel.example.com): " DOMAIN </dev/tty
 read -p "Enter Admin Password: " PASSWORD </dev/tty
 
+# Generate .env files
+echo "⚙️ Generating environment files..."
+cat <<EOF > /var/www/aetherpanel/api/.env
+DATABASE_URL="file:./dev.db"
+JWT_SECRET="aether-$(date +%s | sha256sum | head -c 16)"
+EOF
+
+cat <<EOF > /var/www/aetherpanel/panel/.env.local
+NEXT_PUBLIC_API_URL=http://$DOMAIN/api
+EOF
+
 # 7. Nginx & Reverse Proxy
 echo "🌐 Configuring Nginx..."
+sudo rm -f /etc/nginx/sites-enabled/aetherpanel /etc/nginx/sites-available/aetherpanel
 cat <<EOF | sudo tee /etc/nginx/sites-available/aetherpanel
 server {
     listen 80;
@@ -53,12 +65,16 @@ server {
         proxy_pass http://localhost:3000;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
     location /api {
         proxy_pass http://localhost:3001;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
 EOF
@@ -67,16 +83,36 @@ sudo nginx -t && sudo systemctl restart nginx
 
 # 8. SSL with Certbot
 echo "🔒 Enabling SSL..."
-# sudo certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m admin@$DOMAIN
+sudo certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m admin@$DOMAIN || echo "⚠️ SSL failed, check domain propagation."
 
-# 9. Install PM2 & Start Services
+# 9. Initialize Database & Start Services
 echo "🚀 Starting Services..."
 sudo npm install -p pm2 -g
-cd /var/www/aetherpanel/api && npm install && npm run build && pm2 delete aether-api || true && pm2 start dist/index.js --name aether-api
-cd /var/www/aetherpanel/daemon && npm install && npm run build && pm2 delete aether-daemon || true && pm2 start dist/index.js --name aether-daemon
-cd /var/www/aetherpanel/panel && npm install && npm run build && pm2 delete aether-panel || true && pm2 start npm --name aether-panel -- start
+
+# API Setup
+cd /var/www/aetherpanel/api
+npm install
+npx prisma db push --accept-data-loss
+ADMIN_PASSWORD=$PASSWORD npx prisma db seed
+npm run build
+pm2 delete aether-api || true
+pm2 start dist/index.js --name aether-api
+
+# Daemon Setup
+cd /var/www/aetherpanel/daemon
+npm install
+npm run build
+pm2 delete aether-daemon || true
+pm2 start dist/index.js --name aether-daemon
+
+# Panel Setup
+cd /var/www/aetherpanel/panel
+npm install
+npm run build
+pm2 delete aether-panel || true
+pm2 start npm --name aether-panel -- start
 
 # 10. Finalizing
-echo "✅ Installation complete! Aetherpanel is now accessible at http://$DOMAIN"
+echo "✅ Installation complete! Aetherpanel is now accessible at https://$DOMAIN"
 pm2 list
 pm2 save && pm2 startup
