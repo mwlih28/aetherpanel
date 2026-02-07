@@ -50,7 +50,7 @@ JWT_SECRET="aether-$(date +%s | sha256sum | head -c 16)"
 EOF
 
 cat <<EOF > /var/www/aetherpanel/panel/.env.local
-NEXT_PUBLIC_API_URL=http://$DOMAIN/api
+NEXT_PUBLIC_API_URL=https://$DOMAIN/api
 EOF
 
 # 7. Nginx & Reverse Proxy
