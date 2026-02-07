@@ -39,7 +39,7 @@ else
     echo "🏗️ Fresh install or directory is not a repo, preparing target..."
     sudo rm -rf /var/www/aetherpanel
     sudo mkdir -p /var/www/aetherpanel
-    sudo cd /var/www/aetherpanel
+    cd /var/www/aetherpanel
     sudo git clone https://github.com/mwlih28/aetherpanel.git .
 fi
 cd /var/www/aetherpanel
