@@ -67,5 +67,13 @@ sudo nginx -t && sudo systemctl restart nginx
 echo "🔒 Enabling SSL..."
 # sudo certbot --nginx -d $DOMAIN --non-interactive --agree-tos -m admin@$DOMAIN
 
-# 9. Finalizing
+# 9. Install PM2 & Start Services
+echo "🚀 Starting Services..."
+sudo npm install -p pm2 -g
+cd /var/www/aetherpanel/api && npm install && npm run build && pm2 start dist/index.js --name aether-api
+cd /var/www/aetherpanel/daemon && npm install && npm run build && pm2 start dist/index.js --name aether-daemon
+cd /var/www/aetherpanel/panel && npm install && npm run build && pm2 start "npm run start" --name aether-panel
+
+# 10. Finalizing
 echo "✅ Installation complete! Aetherpanel is now accessible at http://$DOMAIN"
+pm2 list
