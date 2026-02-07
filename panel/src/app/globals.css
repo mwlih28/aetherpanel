@@ -1,10 +1,6 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
@@ -34,30 +30,32 @@
   --radius: 1rem;
 }
 
-@layer base {
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-feature-settings: "rlig" 1, "calt" 1;
 }
 
-@layer utilities {
-  .glass {
-    @apply bg-card/40 backdrop-blur-xl border border-border/50;
-  }
+.glass {
+  background-color: color-mix(in srgb, var(--card) 40%, transparent);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: hsl(var(--background));
+  background: var(--background);
 }
+
 ::-webkit-scrollbar-thumb {
   background: oklch(0.3 0 0);
   border-radius: 10px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: oklch(0.4 0 0);
 }

@@ -55,6 +55,7 @@ EOF
 
 # 7. Nginx & Reverse Proxy
 echo "🌐 Configuring Nginx..."
+sudo rm -f /etc/nginx/sites-enabled/default
 sudo rm -f /etc/nginx/sites-enabled/aetherpanel /etc/nginx/sites-available/aetherpanel
 cat <<EOF | sudo tee /etc/nginx/sites-available/aetherpanel
 server {
