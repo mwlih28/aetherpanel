@@ -26,8 +26,9 @@ export const register = async (req: Request, res: Response) => {
         });
 
         res.json({ message: 'User created', userId: user.id });
-    } catch (error) {
-        res.status(400).json({ error: 'Email or username already exists' });
+    } catch (error: any) {
+        console.error('[REGISTER-ERROR]', error?.message || error);
+        res.status(400).json({ error: error.message?.includes('Unique constraint') ? 'Email or username already exists' : 'Registration failed' });
     }
 };
 
@@ -37,14 +38,22 @@ export const login = async (req: Request, res: Response) => {
     try {
         const user = await prisma.user.findUnique({ where: { email } });
 
-        if (!user || !(await argon2.verify(user.password, password))) {
+        if (!user) {
+            console.warn(`[LOGIN-FAIL] User not found: ${email}`);
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const isValid = await argon2.verify(user.password, password);
+        if (!isValid) {
+            console.warn(`[LOGIN-FAIL] Invalid password for: ${email}`);
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '7d' });
 
         res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
-    } catch (error) {
+    } catch (error: any) {
+        console.error('[LOGIN-ERROR]', error?.message || error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
