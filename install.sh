@@ -56,6 +56,13 @@ EOF
 # 7. Nginx & Reverse Proxy
 echo "🌐 Configuring Nginx..."
 sudo rm -f /etc/nginx/sites-enabled/default
+# Remove any other site that might be using this domain
+for file in /etc/nginx/sites-enabled/*; do
+    if grep -q "$DOMAIN" "$file"; then
+        echo "🗑️ Removing conflicting Nginx config: $file"
+        sudo rm -f "$file"
+    fi
+done
 sudo rm -f /etc/nginx/sites-enabled/aetherpanel /etc/nginx/sites-available/aetherpanel
 cat <<EOF | sudo tee /etc/nginx/sites-available/aetherpanel
 server {
