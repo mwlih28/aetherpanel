@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      String   @default("USER") // ADMIN, USER
+  servers   Server[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Node {
+  id        String   @id @default(uuid())
+  name      String
+  ip        String
+  port      Int      @default(3002)
+  token     String   // Secret token for Panel-Daemon comms
+  servers   Server[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Server {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  ownerId     String
+  nodeId      String
+  dockerImage String
+  memory      Int      // in MB
+  cpu         Int      // in units (e.g., 100 = 1 core)
+  disk        Int      // in MB
+  status      String   @default("OFFLINE") // STARTING, ONLINE, OFFLINE, SUSPENDED
+  ports       String   // JSON string of port mappings
+  envVars     String   // JSON string of environment variables
+  
+  owner       User     @relation(fields: [ownerId], references: [id])
+  node        Node     @relation(fields: [nodeId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
